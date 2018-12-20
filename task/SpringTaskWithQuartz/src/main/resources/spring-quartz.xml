@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        					http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+	<context:component-scan base-package="site.ilemon.task" />
+	
+	<!-- 在指定对象的指定方法上执行定时任务 -->
+	<bean id="simpleJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="simpleScheduleJob" />
+		<property name="targetMethod" value="doSomething" />
+	</bean>
+	
+	<!-- 当需要复杂的业务处理时，将数据对象传输到实现了QuartzJobBean的子类中 -->
+	<bean name="complexScheduleJob"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="site.ilemon.task.ComplexScheduleJob" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="service" value-ref="myService"/>
+			</map>
+		</property>
+		<property name="durability" value="true" />
+	</bean>
+	
+	<!-- 执行simpleScheduleJob-->
+	<bean id="simpleTrigger"  class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+		<property name="jobDetail" ref="simpleJobDetail" />
+		<property name="startDelay" value="1000" />
+		<property name="repeatInterval" value="2000" />
+	</bean>
+
+	<!-- 使用cron表达式执行定时任务 -->
+	<bean id="cronTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="complexScheduleJob" />
+		<property name="cronExpression" value="0/5 * * * * ?" />
+	</bean>
+
+	<!-- Scheduler 工厂配置 -->
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="jobDetails">
+			<list>
+				<ref bean="simpleJobDetail" />
+				<ref bean="complexScheduleJob" />
+			</list>
+		</property>
+		<property name="triggers">
+			<list>
+				<ref bean="simpleTrigger"/>
+				<ref bean="cronTrigger" />
+			</list>
+		</property>
+	</bean>
+</beans>

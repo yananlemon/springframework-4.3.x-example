@@ -1,0 +1,41 @@
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<display-name>Archetype Created Web Application</display-name>
+	<!-- spring config -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:applicationContext.xml</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+	</listener>
+
+	<servlet>
+		<servlet-name>spring</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet
+		</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:spring-mvc.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+		<async-supported>true</async-supported>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>spring</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
+	<!-- Spring刷新Interceptor防止内存泄漏 -->
+	<listener>
+		<listener-class>org.springframework.web.util.IntrospectorCleanupListener
+		</listener-class>
+	</listener>
+
+	<!-- 设置session 超时时间为20分钟 -->
+	<session-config>
+		<session-timeout>20</session-timeout>
+	</session-config>
+</web-app>

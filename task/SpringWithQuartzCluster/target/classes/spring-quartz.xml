@@ -53,7 +53,7 @@
 	<bean id="cronTrigger"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail" ref="calDailyIncomeTask" />
-		<property name="cronExpression" value="0/5 * * * * ?" />
+		<property name="cronExpression" value="0/60 * * * * ?" />
 	</bean>
 
 	<!-- Scheduler 工厂配置 -->
